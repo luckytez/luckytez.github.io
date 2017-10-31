@@ -126,7 +126,9 @@ storage nat nextBetId;
               <p><strong>To play</strong>, simply choose your bet size and hit the <strong>"I'm feeling Lucky!"</strong> button. If you're using TezBox a payment prompt will appear (ensure your TezBox is unlocked), otherwise a command to run on your tezos-client will be displayed. Depending on the tezos network, the result can take <strong>approximately 5 minutes to be processed.</strong></p>
               <h5>Other questions and answers</h5>
                 <dl>
-                  <dt>Do I really need to use TezBox</dt>
+                  <dt>How does this dapp work?</dt>
+                  <dd>It's pretty simple - you send a transaction to the smart contract that is atelast 10tez. The smart contract than stores your bet in storage, and queries our Oracle contract. Our off-chain oracle service picks up on the query, and responds directly to our smart contract with a result (win or lose), which triggers a pay out if required.</dd>
+                  <dt>Do I really need to use TezBox?</dt>
                   <dd>No you don't - but you'll find the experience is a lot more streamlined if you do. We're developing a Firefox plugin for TezBox, as well as a lightweight browser wallet and mobile wallets too.</dd>
                   <dt>TezBox won't prompt me for payment, what do I do?</dt>
                   <dd>Check to ensure your TezBox wallet is unlocked (click the plugin icon). If this is not the issue, it could be an issue with the node we connect to, or alphanet in general.</dd>
