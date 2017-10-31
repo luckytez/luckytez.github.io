@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Luckyꜩ - first publicly available dapp for Tezos</title>
+    <meta property="og:title" content="Luckyꜩ - first publicly available dapp for Tezos" />
+    <meta property="og:description" content="Luckyꜩ displays a powerful combination of development tools for tezos: TezBox, eztz.js, TezRPC, OracleTZ and fi" />
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Exo+2" rel="stylesheet">
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div class="container">
+        <div class="row justify-content-md-center">
+        <div class="col-md-10 text-center heroTitle">
+            <h2>Luckyꜩ</h2>
+            <p>Are you feeling lucky? No house edge, 50/50 chance of doubling up, or losing it all.</p>
+        </div>
+        </div>
+        <div class="row">
+        <div class="col-md-12">
+        
+        <ul class="nav nav-tabs" role="tablist">
+          <li class="nav-item"><a id="play-tab" data-toggle="tab" class="nav-link active" href="#play" role="tab" aria-controls="play" aria-expanded="true">Play</a></li>
+          <li class="nav-item"><a id="smart-tab" data-toggle="tab" class="nav-link" href="#smart" role="tab" aria-controls="smart">Smart Contract</a></li>
+          <li class="nav-item"><a id="help-tab" data-toggle="tab" class="nav-link" href="#help" role="tab" aria-controls="help">Help</a></li>
+          <li class="nav-item"><a id="about-tab" data-toggle="tab" class="nav-link" href="#about" role="tab" aria-controls="about">About</a></li>
+        </ul>
+        <div class="tab-content">
+          <div id="play" aria-labelledby="play-tab" class="tab-pane fade show active" role="tabpanel">
+            <div class="row justify-content-md-center">
+            <div class="col-md-4 text-center">
+                <h3>Place your bet!</h3>
+                <p id="installTezbox" class="alert alert-info">Try installing <a href="http://tezbox.github.io" target="_blank">TezBox</a> for a better experience</p>
+                <p id="currentBalance">Loading Wallet...</p>
+                <p id="currentAddress"></p>
+            
+                <form>
+     
+                  <div class="form-group">
+                    <input style="text-align: center;" required type="text" class="form-control" value="50" id="amount" placeholder="Enter your wager">
+                  </div>
+                  
+              <div class="btn-group" role="group">
+                <button onclick="$('#amount').val(10);" type="button" class="btn btn-success">10ꜩ</button>
+                <button onclick="$('#amount').val(50);" type="button" class="btn btn-success">50ꜩ</button>
+                <button onclick="$('#amount').val(100);" type="button" class="btn btn-success">100ꜩ</button>
+                <button onclick="$('#amount').val(1000);" type="button" class="btn btn-success">1,000ꜩ</button>
+              </div>
+              <br />
+              <br />
+              <button type="submit" id="getFreeTez" class="btn btn-primary">I'm feeling lucky!</button>
+              <div><code id="manualTransaction"></code></div>
+            </div>
+            <div class="col-md-8 text-center">
+                <h3>Recent Luck</h3>
+                <div id="recentLuck"><p><em>Loading recent transactions</em></p></div>
+            </div>
+            </div>
+          </div>
+          <div id="smart" aria-labelledby="smart-tab" class="tab-pane fade show" role="tabpanel">
+            <div class="row justify-content-md-center">
+            <div class="col-md-12 text-center">
+              <p>The smart contract powering <strong>Luckyꜩ</strong> has been written in <a href="https://tezrpc.me/fi/" target="_blank">fi</a>, and compiled into valid Michelson code. Please view the source below. <strong>Luckyꜩ</strong> is also unique as it uses an external Oracle service that I developed (and will release open source in the near future).</p>
+            </div>
+            </div>
+            <div class="row">
+                    <div class="col-md-6">
+                        <div id="code">const string ORACLE_ID "c9ef2608b7f4835c884aaf856d760894350ed5f8";
+const tez ORACLE_FEE "1.00";
+const tez MINBET "10.00";
+
+object Bet(
+  account sender,
+  tez amount,
+  bool processed,
+  bool winner
+);
+object OracleRequest(
+  string oracleId,
+  nat returnId
+);
+storage map(nat => Bet) bets;
+storage nat nextBetId;
+
+@bet(){
+  if (AMOUNT < MINBET) throw;
+  storage.nextBetId.add(nat 1);
+  storage.bets.push(storage.nextBetId, new Bet(SOURCE, sub(AMOUNT, ORACLE_FEE), bool False, bool False));
+  pay(oracle "TZ1uWRckEMc78zAWkqQSF6FaRSwbzXZB4czS", ORACLE_FEE, new OracleRequest(ORACLE_ID, storage.nextBetId));
+}
+
+//Oracle callback
+@result(nat betId, int result){
+  if (SOURCE != oracle "TZ1uWRckEMc78zAWkqQSF6FaRSwbzXZB4czS") throw;
+  if (!storage.bets.in(input.betId)) throw;
+  let Bet bet = storage.bets.get(input.betId);
+  if (bet.processed) throw;
+  bet.processed = bool True;
+  if (input.result == int 1) {
+    bet.winner = bool True;
+  }
+  storage.bets.push(input.betId, bet);
+  if (bet.winner){
+    pay(bet.sender, mul(bet.amount, nat 2));
+  } else {
+    clean();
+  }
+}</div>
+                    </div>
+                    <div class="col-md-6">
+                        <pre id="compiled">parameter (or unit (pair nat int));return unit;storage (pair (map nat (pair (contract unit unit) (pair tez (pair bool bool)))) nat);code{DUP;CDR;SWAP;UNIT;SWAP;CAR;IF_LEFT{UNIT;AMOUNT;DIP{PUSH tez "10.00"};CMPLT;IF{FAIL}{};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH nat 1};ADD;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{DUP;CAR;SWAP;CDR;DROP};SWAP;PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH bool False;DIP{PUSH bool False};SWAP;PAIR;DIP{AMOUNT;DIP{PUSH tez "1.00"};SUB};SWAP;PAIR;DIP{SOURCE unit unit};SWAP;PAIR;SOME};DIIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};UPDATE;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{CDR};PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH string "c9ef2608b7f4835c884aaf856d760894350ed5f8"};SWAP;PAIR;DIP{PUSH tez "1.00"};DIIP{PUSH (contract (pair string nat) unit) "TZ1uWRckEMc78zAWkqQSF6FaRSwbzXZB4czS"};DIIIP{DROP;DROP;DROP};TRANSFER_TOKENS;PAIR}{NONE (pair (contract unit unit) (pair tez (pair bool bool)));SOURCE (pair string nat) unit;MANAGER;DIP{PUSH key_hash "tz1VbG9QbdR4k4tnWj4kYt8mySzPYvLoDBcQ"};CMPNEQ;IF{FAIL}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};MEM;DIP{PUSH bool False};CMPEQ;IF{FAIL}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};GET;IF_NONE{FAIL}{};SOME;DIP{DROP};DUP;IF_NONE{FAIL}{};CDDAR;DIP{PUSH bool True};CMPEQ;IF{FAIL}{};PUSH bool True;DIP{DUP;IF_NONE{FAIL}{}};DIP{DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;CDR};PAIR;SWAP;PAIR;SWAP;PAIR;SOME;DIP{DROP};SWAP;DUP;DIP{SWAP};CDR;DIP{PUSH int 1};CMPEQ;IF{PUSH bool True;DIP{DUP;IF_NONE{FAIL}{}};DIP{DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;DROP};SWAP;PAIR;SWAP;PAIR;SWAP;PAIR;SOME;DIP{DROP}}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DUP;IF_NONE{FAIL}{};SOME};DIIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};UPDATE;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{CDR};PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DUP;IF_NONE{FAIL}{};CDDDR;DIP{PUSH bool True};CMPEQ;IF{UNIT;DIP{DUP;IF_NONE{FAIL}{};CDAR;DIP{PUSH nat 2};MUL};DIIP{DUP;IF_NONE{FAIL}{};CAR};DIIIP{DROP;DROP;DROP};TRANSFER_TOKENS}{DROP;DROP};PAIR}};</pre>
+                    </div>
+                </div>
+          </div>
+          <div id="help" aria-labelledby="help-tab" class="tab-pane fade show" role="tabpanel">
+            <div class="row justify-content-md-center">
+              <div class="col-md-12">
+                <p>It is highly recommended that you use the <a href="http://tezbox.github.io" target="_blank">TezBox</a> chrome plugin wallet when using Luckyꜩ - otherwise you will need to have access to a tezos-client to make transactions from</p>
+                <p>Alternatively, the <a href="http://tezbox.github.io" target="_blank">TezBox</a> lightweight browser wallet will be available soon so follow us on <a href="https://twitter.com/TezBox_Wallet" target="_blank">twitter</a> to keep up to date.</p>
+              <p><strong>To play</strong>, simply choose your bet size and hit the <strong>"I'm feeling Lucky!"</strong> button. If you're using TezBox a payment prompt will appear (ensure your TezBox is unlocked), otherwise a command to run on your tezos-client will be displayed. Depending on the tezos network, the result can take <strong>approximately 5 minutes to be processed.</strong></p>
+              <h5>Other questions and answers</h5>
+                <dl>
+                  <dt>Do I really need to use TezBox</dt>
+                  <dd>No you don't - but you'll find the experience is a lot more streamlined if you do. We're developing a Firefox plugin for TezBox, as well as a lightweight browser wallet and mobile wallets too.</dd>
+                  <dt>TezBox won't prompt me for payment, what do I do?</dt>
+                  <dd>Check to ensure your TezBox wallet is unlocked (click the plugin icon). If this is not the issue, it could be an issue with the node we connect to, or alphanet in general.</dd>
+                  <dt>My balance is updating before the transaction has been processed, why is that?</dt>
+                  <dd>The balance displayed is currently showing the "unconfirmed" balance of your address. It updates it almost real-time, but prior to the transactions being confirmed.</dd>
+                  <dt>Why does 1ꜩ seem to disappear when using this?</dt>
+                  <dd>This is to cover the oracle fee, no other house-edge/fee is impossed</dd>
+                  <dt>Can I really win tez with this?</dt>
+                  <dd>Alphanet tez, yes - which is fake pretend tez.</dd>
+                   <dt>Wow awesome, is there any way I can support you with this?</dt>
+                  <dd>Any help and or support is appreciated, flick me a message via the Riot channel (@stephenandrews) or <a href="mailto:stephen@andrewstribe.co.nz">email</a>. If you want to support me financially (any and all funding is welcome), please direct funds to my Bitcoin address: <a href="bitcoin:1KSiyfgs5XwTZjaLpmCTHxonsyXMx383P1"><strong>1KSiyfgs5XwTZjaLpmCTHxonsyXMx383P1</strong></a></dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+          <div id="about" aria-labelledby="about-tab" class="tab-pane fade show" role="tabpanel">
+            <div class="row justify-content-md-center">
+              <div class="col-md-12">
+                <p><strong>Luckyꜩ</strong> is brought to you by myself, <a target="_blank" href="https://github.com/stephenandrews">Stephen Andrews</a> - check me out on github or pop into the Riot channel and say hello. My focus is to aid in the development of decentralized app related tools and resources to allow developers to easily start and deploy working apps for the Tezos block chain.</p>
+                <p><strong>Luckyꜩ</strong> is the first working dapp released to the public on the Tezos alphanet, and utilises a powerful combination of tools that I've been working on, which will all be open source. These tools include</p>
+                <ul>
+                  <li><a href="http://tezbox.github.io" target="_blank">TezBox</a> - full Tezos wallet, with a MetaMask like chrome plugin</li>
+                  <li><a href="https://github.com/stephenandrews/eztz/blob/master/README.md" target="_blank">eztz.js</a> - powerful web3-inspired JS library which integrates with the chain</li>
+                  <li><a href="https://tezrpc.me/fi/" target="_blank">fi</a> - currently in alpha, an interpreted language that compiles to valid Michelson</li>
+                  <li><a href="https://tezrpc.me/" target="_blank">TezRPC</a> - a load-balanced Tezos RPC proxy service and extended API</li>
+                  <li><a href="https://github.com/luckytez/luckytez.github.io" target="_blank">Luckyꜩ</a> related code can be viewed from our github repo</li>
+                  <li><strong>Soon to be announced Oracle Service</strong> - bridging the on-chain/off-chain divide</li>
+                </ul>
+                <p>Moving forward, I want to keep up the momentum I've picked up with the above projects to ensure I can deliver solid, secure and complete open source tools for developers to work with, modify and contribute toward.</p>
+                <p>I am currently unpaid and unfunded for the work I've complete thus far, and would really appreciate any finacial donations or support with documentation/code review/design work. Flick me a message via the Riot channel (@stephenandrews) or <a href="mailto:stephen@andrewstribe.co.nz">email</a>. Donations can be made via Bitcoin to <a href="bitcoin:1KSiyfgs5XwTZjaLpmCTHxonsyXMx383P1"><strong>1KSiyfgs5XwTZjaLpmCTHxonsyXMx383P1</strong></a>.</p>
+                <p>A special thank you to all who have donated in the past, and any donations going forward.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="row footer">
+        <div class="col-md-12">
+        Developed by Stephen Andrews / Donate Bitcoin -  <a href="bitcoin:1KSiyfgs5XwTZjaLpmCTHxonsyXMx383P1">1KSiyfgs5XwTZjaLpmCTHxonsyXMx383P1</a>
+        </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+    <script src="https://ace.c9.io/build/src/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script src="./eztz.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
