@@ -5,7 +5,6 @@ tbInstalled = false,
 onloadTbapi = function(){
   tbInstalled = true;//TODO
   window.tbapi.getActiveAccount().then(function(r){
-    console.log(r);
     tz1 = r.tz1;
     $("#installTezbox").hide();
     $("#currentBalance").show();
@@ -26,25 +25,27 @@ watch = eztz.contract.watch("TZ1fnUqEgGMawC3TV21d13BSnQ4XywFhaisT", 5, function(
   s = s[0];
   if (JSON.stringify(s) != JSON.stringify(index)){
     index = s;
-    s.reverse();
-    s = s.slice(0,8);
+    s.vals.reverse();
+    s.keys.reverse();
+    sv = s.vals.slice(0,8);
+    sk = s.keys.slice(0,8);
     var tb = "<table>";
     tb += "<thead><th></th><th>ID</th><th>Address</th><th>Bet Amount</th><th>Result</th></thead>";
     var spin = '', win = '';
-    for(var i = 0; i < s.length; i++){
-      if (s[i].value[3] == 'False'){
+    for(var i = 0; i < sv.length; i++){
+      if (!sv[i][3]){
         win = '<i class=\"fa fa-close\"></i>';
       } else {
         win = '<i class=\"fa fa-check\"></i>';
       }
-      if (s[i].value[2] == 'False'){
+      if (!sv[i][2]){
         win = '';
         spin = '<i class=\"fa fa-circle-o-notch fa-spin\"></i>';
       } else {
         spin = '';
       }
       
-      tb += "<tr><td>"+spin+"</td><td>" + s[i].key + "</td><td>" + s[i].value[0]  + "</td><td>" + s[i].value[1]  + "ꜩ</td><td>" + win  + "</td></tr>";
+      tb += "<tr><td>"+spin+"</td><td>" + sk[i] + "</td><td>" + sv[i][0]  + "</td><td>" + sv[i][1]  + "ꜩ</td><td>" + win  + "</td></tr>";
     }
     tb += "</table>";
     $('#recentLuck').html(tb);
