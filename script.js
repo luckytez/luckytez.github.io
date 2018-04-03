@@ -2,15 +2,6 @@ var editor = ace.edit("code");
 editor.setTheme("ace/theme/monokai");
 var tz1,
 tbInstalled = false,
-formatMoney = function(n, c, d, t){
-  var c = isNaN(c = Math.abs(c)) ? 2 : c, 
-  d = d == undefined ? "." : d, 
-  t = t == undefined ? "," : t, 
-  s = n < 0 ? "-" : "", 
-  i = String(parseInt(n = Math.abs(Number(n) || 0).toFixed(c))), 
-  j = (j = i.length) > 3 ? j % 3 : 0;
-  return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
-},
 onloadTbapi = function(){
   tbInstalled = true;//TODO
   window.tbapi.getActiveAccount().then(function(r){
@@ -25,13 +16,14 @@ onloadTbapi = function(){
 },
 updateBalance = function(){
   window.eztz.rpc.getBalance(tz1).then(function(r){
-    $("#currentBalance").html(formatMoney(r/100, 2, '.', ',') + 'ꜩ');
+    $("#currentBalance").html(eztz.utility.formatMoney(eztz.utility.mintotz(r), 6, '.', ',') + 'ꜩ');
   });
 },
 index = [],
-watch = eztz.contract.watch("TZ1aZJNUbW4yM7pzjSTM3dncgvXzsK39d1Z2", 5, function(s){
-  s = eztz.utility.tzjson2arr(s);
-  s = s[0][0];
+watch = eztz.contract.watch("TZ1fnUqEgGMawC3TV21d13BSnQ4XywFhaisT", 5, function(s){
+  s = eztz.utility.mic2arr(s);
+  console.log(s);
+  s = s[0];
   if (JSON.stringify(s) != JSON.stringify(index)){
     index = s;
     s.reverse();
@@ -60,7 +52,7 @@ watch = eztz.contract.watch("TZ1aZJNUbW4yM7pzjSTM3dncgvXzsK39d1Z2", 5, function(
       updateBalance();
   }
 });
-$('docmenut').ready(function(){
+$('document').ready(function(){
     if (typeof window.tbapi != "undefined"){
       onloadTbapi();
     } else {
@@ -71,12 +63,12 @@ $('docmenut').ready(function(){
       var amount = $('#amount').val();
       if (tbInstalled){
         window.tbapi.initiateTransaction({
-          'address' : 'TZ1aZJNUbW4yM7pzjSTM3dncgvXzsK39d1Z2',
+          'address' : 'TZ1fnUqEgGMawC3TV21d13BSnQ4XywFhaisT',
           'amount' : amount,
           'parameters' : 'Left Unit',
         });   
       } else {
-        $('#manualTransaction').html("<strong>Please run the following:</strong><br />./tezos-client transfer "+amount+" from {ACCOUNT} to 'TZ1aZJNUbW4yM7pzjSTM3dncgvXzsK39d1Z2' -arg 'Left Unit'");
+        $('#manualTransaction').html("<strong>Please run the following:</strong><br />./tezos-client transfer "+amount+" from {ACCOUNT} to 'TZ1fnUqEgGMawC3TV21d13BSnQ4XywFhaisT' -arg 'Left Unit'");
       }
     });
 });

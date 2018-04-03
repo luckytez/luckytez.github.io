@@ -92,12 +92,12 @@ storage nat nextBetId;
   if (AMOUNT < MINBET) throw;
   storage.nextBetId.add(nat 1);
   storage.bets.push(storage.nextBetId, new Bet(SOURCE, sub(AMOUNT, ORACLE_FEE), bool False, bool False));
-  pay(oracle "TZ1uWRckEMc78zAWkqQSF6FaRSwbzXZB4czS", ORACLE_FEE, new OracleRequest(ORACLE_ID, storage.nextBetId));
+  pay(oracle "TZ1fAdo1y6Un4TSAN4Kt7HJg7EMV1kVqaNaL", ORACLE_FEE, new OracleRequest(ORACLE_ID, storage.nextBetId));
 }
 
 //Oracle callback
 @result(nat betId, int result){
-  if (SOURCE != oracle "TZ1uWRckEMc78zAWkqQSF6FaRSwbzXZB4czS") throw;
+  if (SOURCE != oracle "TZ1fAdo1y6Un4TSAN4Kt7HJg7EMV1kVqaNaL") throw;
   if (!storage.bets.in(input.betId)) throw;
   let Bet bet = storage.bets.get(input.betId);
   if (bet.processed) throw;
@@ -114,7 +114,7 @@ storage nat nextBetId;
 }</div>
                     </div>
                     <div class="col-md-6">
-                        <pre id="compiled">parameter (or unit (pair nat int));return unit;storage (pair (map nat (pair (contract unit unit) (pair tez (pair bool bool)))) nat);code{DUP;CDR;SWAP;UNIT;SWAP;CAR;IF_LEFT{UNIT;AMOUNT;DIP{PUSH tez "10.00"};CMPLT;IF{FAIL}{};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH nat 1};ADD;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{DUP;CAR;SWAP;CDR;DROP};SWAP;PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH bool False;DIP{PUSH bool False};SWAP;PAIR;DIP{AMOUNT;DIP{PUSH tez "1.00"};SUB};SWAP;PAIR;DIP{SOURCE unit unit};SWAP;PAIR;SOME};DIIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};UPDATE;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{CDR};PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH string "c9ef2608b7f4835c884aaf856d760894350ed5f8"};SWAP;PAIR;DIP{PUSH tez "1.00"};DIIP{PUSH (contract (pair string nat) unit) "TZ1uWRckEMc78zAWkqQSF6FaRSwbzXZB4czS"};DIIIP{DROP;DROP;DROP};TRANSFER_TOKENS;PAIR}{NONE (pair (contract unit unit) (pair tez (pair bool bool)));SOURCE (pair string nat) unit;MANAGER;DIP{PUSH key_hash "tz1VbG9QbdR4k4tnWj4kYt8mySzPYvLoDBcQ"};CMPNEQ;IF{FAIL}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};MEM;DIP{PUSH bool False};CMPEQ;IF{FAIL}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};GET;IF_NONE{FAIL}{};SOME;DIP{DROP};DUP;IF_NONE{FAIL}{};CDDAR;DIP{PUSH bool True};CMPEQ;IF{FAIL}{};PUSH bool True;DIP{DUP;IF_NONE{FAIL}{}};DIP{DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;CDR};PAIR;SWAP;PAIR;SWAP;PAIR;SOME;DIP{DROP};SWAP;DUP;DIP{SWAP};CDR;DIP{PUSH int 1};CMPEQ;IF{PUSH bool True;DIP{DUP;IF_NONE{FAIL}{}};DIP{DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;DROP};SWAP;PAIR;SWAP;PAIR;SWAP;PAIR;SOME;DIP{DROP}}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DUP;IF_NONE{FAIL}{};SOME};DIIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};UPDATE;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{CDR};PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DUP;IF_NONE{FAIL}{};CDDDR;DIP{PUSH bool True};CMPEQ;IF{UNIT;DIP{DUP;IF_NONE{FAIL}{};CDAR;DIP{PUSH nat 2};MUL};DIIP{DUP;IF_NONE{FAIL}{};CAR};DIIIP{DROP;DROP;DROP};TRANSFER_TOKENS}{DROP;DROP};PAIR}};</pre>
+                        <pre id="compiled">parameter (or unit (pair nat int));return unit;storage (pair (map nat (pair (contract unit unit) (pair tez (pair bool bool)))) nat);code{DUP;CDR;SWAP;UNIT;SWAP;CAR;IF_LEFT{UNIT;AMOUNT;DIP{PUSH tez "10.00"};CMPLT;IF{FAIL}{};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH nat 1};ADD;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{DUP;CAR;SWAP;CDR;DROP};SWAP;PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH bool False;DIP{PUSH bool False};SWAP;PAIR;DIP{AMOUNT;DIP{PUSH tez "1.00"};SUB};SWAP;PAIR;DIP{SOURCE unit unit};SWAP;PAIR;SOME};DIIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};UPDATE;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{CDR};PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CDR;DIP{PUSH string "c9ef2608b7f4835c884aaf856d760894350ed5f8"};SWAP;PAIR;DIP{PUSH tez "1.00"};DIIP{PUSH (contract (pair string nat) unit) "TZ1fAdo1y6Un4TSAN4Kt7HJg7EMV1kVqaNaL"};DIIIP{DROP;DROP;DROP};TRANSFER_TOKENS;PAIR}{NONE (pair (contract unit unit) (pair tez (pair bool bool)));SOURCE (pair string nat) unit;MANAGER;DIP{PUSH key_hash "tz1a66pkzhUpc2kRnyYV8Q9tkUAnTj5ACoHz"};CMPNEQ;IF{FAIL}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};MEM;DIP{PUSH bool False};CMPEQ;IF{FAIL}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};GET;IF_NONE{FAIL}{};SOME;DIP{DROP};DUP;IF_NONE{FAIL}{};CDDAR;DIP{PUSH bool True};CMPEQ;IF{FAIL}{};PUSH bool True;DIP{DUP;IF_NONE{FAIL}{}};DIP{DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;CDR};PAIR;SWAP;PAIR;SWAP;PAIR;SOME;DIP{DROP};SWAP;DUP;DIP{SWAP};CDR;DIP{PUSH int 1};CMPEQ;IF{PUSH bool True;DIP{DUP;IF_NONE{FAIL}{}};DIP{DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;DUP;CAR;SWAP;CDR;DROP};SWAP;PAIR;SWAP;PAIR;SWAP;PAIR;SOME;DIP{DROP}}{};SWAP;DUP;DIP{SWAP};CAR;DIP{DUP;IF_NONE{FAIL}{};SOME};DIIP{DIIP{SWAP};DIP{SWAP};SWAP;DUP;DIP{SWAP;DIP{SWAP};DIIP{SWAP}};CAR};UPDATE;DIP{DIIP{SWAP};DIP{SWAP};SWAP};DIP{CDR};PAIR;SWAP;DIP{SWAP};DIIP{SWAP};DUP;IF_NONE{FAIL}{};CDDDR;DIP{PUSH bool True};CMPEQ;IF{UNIT;DIP{DUP;IF_NONE{FAIL}{};CDAR;DIP{PUSH nat 2};MUL};DIIP{DUP;IF_NONE{FAIL}{};CAR};DIIIP{DROP;DROP;DROP};TRANSFER_TOKENS}{DROP;DROP};PAIR}};</pre>
                     </div>
                 </div>
           </div>
@@ -176,7 +176,7 @@ storage nat nextBetId;
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
     <script src="https://ace.c9.io/build/src/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script src="./eztz.js"></script>
+    <script src="./eztz.min.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>
